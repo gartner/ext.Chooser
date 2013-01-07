@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>TinyMCE File-browser</title>
+
+    <link type="text/css" href="../extjs4/resources/css/ext-all.css" media="screen" rel="stylesheet" />
+    <link type="text/css" href="ext.Chooser.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="/jscripts/extjs4/ext-all.js"></script>
+    <script type="text/javascript" src="ext.Chooser.js"></script>
+    <script type="text/javascript" src="../tiny_mce/tiny_mce_popup.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+var FileBrowserDialogue = {
+    init : function () {
+        // Here goes your code for setting your custom things onLoad.
+        var win        = tinyMCEPopup.getWindowArg("window"),
+            field_name = tinyMCEPopup.getWindowArg("input"),
+            type       = tinyMCEPopup.getWindowArg("type"),
+            config     = tinyMCEPopup.getWindowArg("config"),
+            vp         = tinyMCEPopup.dom.getViewPort(window),
+            chooser;
+
+        // Set filebrowser-dialogs size to the same as the popup-window.
+        config.type = type;
+        config.window.width = vp.w;
+        config.window.height = vp.h;
+        config.window.closable = false;
+        config.window.frame = true;
+
+        // Make sure the tinyMCE windows is closed when the chooser closes.
+        if (config.window.listeners == undefined) {
+            config.window.listeners = {};
+        }
+        config.window.listeners.close = {
+            fn: function()
+            {
+                tinyMCEPopup.close();
+            }
+        };
+        config.okFunction = function(nodes)
+        {
+            // Put the value returned from the chooser, into the field in the tinyMCEpopup
+            win.document.getElementById(field_name).value = nodes[0].data.url;
+
+            // If an imagebrowser, also set the alt-value and the title
+            if ('image' === type) {
+                win.document.getElementById('alt').value = nodes[0].data.name;
+                win.document.getElementById('title').value = nodes[0].data.name;
+            }
+
+            // for image browsers: update image dimensions
+            if (win.ImageDialog !== undefined && win.ImageDialog !== null) {
+                if (win.ImageDialog.getImageData) {
+                    win.ImageDialog.getImageData();
+                }
+                if (win.ImageDialog.showPreviewImage) {
+                    win.ImageDialog.showPreviewImage(nodes[0].data.url);
+                }
+            }
+
+        };
+
+        chooser = Chooser(config);
+
+        // Resize the extjs-image-chooser when the windows its in is resized.
+        tinymce.dom.Event.add(window, 'resize', function(e){
+            var vp = tinyMCEPopup.dom.getViewPort(window);
+            chooser.window.setSize(vp.w, vp.h);
+        });
+
+        // Display the chooser
+        chooser.show();
+
+    }
+
+};
+
+tinyMCEPopup.onInit.add(FileBrowserDialogue.init, FileBrowserDialogue);
+
+</script>
+</body>
+</html>
