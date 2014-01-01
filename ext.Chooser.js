@@ -148,7 +148,9 @@ Chooser = function(config)
                 type: 'ajax',
                 url: _config.dataUrl,
                 reader: {
-                    type: 'json'
+                    type: 'json',
+                    root: 'data',
+                    successProperty: 'success'
                 }
             },
             autoLoad: true
