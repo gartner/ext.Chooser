@@ -234,9 +234,7 @@ Chooser = function(config)
                     trackOver: true,
                     overItemCls: 'x-item-over',
                     itemSelector: _config.data.itemSelector,
-                    viewConfig: {
-                        emptyText: 'No images to display'
-                    },
+                    emptyText: 'No images to display',
                     autoScroll: true,
                     prepareData: function(data) {
                         Ext.apply(data, {
