@@ -135,6 +135,11 @@ Chooser = function(config)
                 }
             },
             folderSort: true,
+            root: {
+                name: 'All tags',
+                expanded: true,
+                id: 'source'
+            },
             sorters: [{
                 property: 'text',
                 directrion: 'ASC'
@@ -142,7 +147,7 @@ Chooser = function(config)
         }),
 
         dataStore: Ext.create('Ext.data.Store', {
-            id:'imagesStore',
+            id: 'imagesStore',
             model: _config.dataModel,
             proxy: {
                 type: 'ajax',
@@ -285,6 +290,7 @@ Chooser = function(config)
             var tree = Ext.create('Ext.tree.Panel', {
                 title: 'Folder',
                 width: 150,
+                frame: true,
                 maxWidth: _config.window.width / 100 * 70,
                 minWidth: 100,
                 rootVisible: false,
@@ -293,13 +299,6 @@ Chooser = function(config)
                 resizable: true,
                 store: this.treeStore,
                 useArrows: true,
-                shadow: false,
-                shadowOffset: 0,
-                root: {
-                    name: 'All tags',
-                    expanded: true,
-                    id: 'source'
-                },
                 listeners: {
                     itemclick: {
                         scope: this,
