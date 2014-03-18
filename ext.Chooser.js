@@ -224,7 +224,7 @@ Chooser = function(config)
                         }
                     ],
                     listeners: {},
-                    width: 580,
+                    //width: 580,
                     scroll: true,
                     region: 'center'
                 });
@@ -290,12 +290,12 @@ Chooser = function(config)
             var tree = Ext.create('Ext.tree.Panel', {
                 title: 'Folder',
                 width: 150,
-                frame: true,
+                //frame: true,
                 maxWidth: _config.window.width / 100 * 70,
                 minWidth: 100,
                 rootVisible: false,
                 region: 'west',
-                layout: 'fit',
+                //layout: 'fit',
                 resizable: true,
                 store: this.treeStore,
                 useArrows: true,
@@ -312,16 +312,18 @@ Chooser = function(config)
                 }
             });
 
-            this.window = Ext.create('Ext.window.Window', Ext.Object.merge({
+            ownWin = {
                 id: 'chooser-window',
-                layout: 'border',
-                shadow: false,
-                shadowOffset: 0,
+                layout: {
+                    type: 'border'
+                },
+                //shadow: false,
+                //shadowOffset: 0,
                 items: [
                     tree,
                     this.getView()
                 ],
-                buttons: [{
+                    buttons: [{
                     text: 'Ok',
                     id: 'chooser-okButton',
                     disabled: true,
@@ -330,7 +332,12 @@ Chooser = function(config)
                     text: 'Cancel',
                     handler: this.cancelCallback
                 }]
-            }, _config.window));
+            },
+
+            this.window = Ext.create('Ext.window.Window', Ext.Object.merge(
+                ownWin,
+                _config.window
+            ));
 
             this.window.show();
         }
