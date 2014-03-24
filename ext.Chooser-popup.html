@@ -6,75 +6,49 @@
     <link type="text/css" href="../extjs4/resources/css/ext-all-debug.css" media="screen" rel="stylesheet" />
     <!--<link type="text/css" href="ext.Chooser.css" rel="stylesheet" />-->
 
-    <script type="text/javascript" src="../extjs4/ext-all-dev.js"></script>
-    <script type="text/javascript" src="../extjs4/src/diag/layout/Context.js"></script>
-    <script type="text/javascript" src="../extjs4/src/diag/layout/ContextItem.js"></script>
+    <script type="text/javascript" src="../extjs4/ext-all.js"></script>
+
+    <script type="text/javascript" src="/js/application.js"></script>
 
     <script type="text/javascript" src="ext.Chooser.js"></script>
 
-</head>
-<body>
+    <script type="text/javascript">
 
-<script type="text/javascript">
-
-    Ext.onReady(function () {
         var FileBrowserDialogue = {
-            init: function () {
+            init: function (elementId) {
                 // Here goes your code for setting your custom things onLoad.
-                var win = null, //tinyMCEPopup.getWindowArg("window"),
-                        field_name = 'test', //tinyMCEPopup.getWindowArg("input"),
-                        type = 'file', //tinyMCEPopup.getWindowArg("type"),
-                        config = {}, //tinyMCEPopup.getWindowArg("config"),
-                //vp         = tinyMCEPopup.dom.getViewPort(window),
-                        chooser;
-
-                // Set filebrowser-dialogs size to the same as the popup-window.
-                config.type = type;
-
-                if (typeof config.window !== 'object') {
-                    config.window = {};
-                }
-                config.window.width = 600;
-                config.window.height = 400;
-                config.window.resizable = true;
-                config.window.draggable = true;
-                config.window.closable = true;
-                config.window.frame = true;
-                config.window.title = "Select";
-
-                config.dataUrl = '/ajax/files';
-                config.treeUrl = '/ajax/doctypes';
-
-                // Make sure the tinyMCE windows is closed when the chooser closes.
-                if (config.window.listeners == undefined) {
-                    config.window.listeners = {};
-                }
-                config.window.listeners.close = {
-                    fn: function () {
-                        tinyMCEPopup.close();
-                    }
-                };
-                config.okFunction = function (nodes) {
-                    // Put the value returned from the chooser, into the field in the tinyMCEpopup
-                    win.document.getElementById(field_name).value = nodes[0].data.url;
-
-                    // If an imagebrowser, also set the alt-value and the title
-                    if ('image' === type) {
-                        win.document.getElementById('alt').value = nodes[0].data.name;
-                        win.document.getElementById('title').value = nodes[0].data.name;
-                    }
-
-                    // for image browsers: update image dimensions
-                    if (win.ImageDialog !== undefined && win.ImageDialog !== null) {
-                        if (win.ImageDialog.getImageData) {
-                            win.ImageDialog.getImageData();
+                var field_name = elementId,
+                    type = 'file',
+                    config = {
+                        type: 'file',
+                        window: {
+                            width: 600,
+                            height: 400,
+                            resizable: true,
+                            draggable: true,
+                            closable: true,
+                            frame: true,
+                            title: 'Select link',
+                            listeners: {
+                                close: {
+                                    fn: function () {
+                                        //tinyMCEPopup.close();
+                                    }
+                                }
+                            }
+                        },
+                        dataUrl: '/ajax/files',
+                        treeUrl: '/ajax/doctypes',
+                        okFunction: function (nodes) {
+                            // Put the value returned from the chooser, into the field in the tinyMCEpopup
+                            //win.document.getElementById(field_name).value = nodes[0].data.url;
+                            var el
+                                    ;
+                            el = document.getElementById(field_name);
+                            el.value = nodes[0].data.url;
                         }
-                        if (win.ImageDialog.showPreviewImage) {
-                            win.ImageDialog.showPreviewImage(nodes[0].data.url);
-                        }
-                    }
-
-                };
+                    },
+                    chooser;
 
                 chooser = Chooser(config);
 
@@ -85,9 +59,30 @@
 
         };
 
-        FileBrowserDialogue.init();
-    });
+        $(document).ready(function () {
+            $(".urlSelector").each(function (index) {
+                        var button = $("<button>...</button>"),
+                                id = this.id
+                                ;
 
-</script>
+                        button.bind('click', function (event) {
+                            event.preventDefault();
+                            FileBrowserDialogue.init(id);
+                        });
+                        $(this).after(button);
+                    }
+            );
+        });
+    </script>
+</head>
+<body>
+
+<button id="openWin" onclick="FileBrowserDialogue.init('url')">Åbn chooser</button>
+<form>
+    <input type="text" class="urlSelector" name="url" id="url"/><br/>
+    <input type="text" name="normal"/><br/>
+    <input type="text" class="urlSelector" name="otherurl" id="otherurl"/><br/>
+</form>
+
 </body>
 </html>
