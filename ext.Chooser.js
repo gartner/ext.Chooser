@@ -42,7 +42,11 @@ Chooser = function(config)
             template: [
                 '<tpl for=".">',
                 '<div class="thumb-wrap" id="{id}">',
-                '<div class="thumb"><img src="{url}" title="{name}"></div>',
+                '<tpl if="thumbnail != \'\'">',
+                    '<div class="thumb"><img src="{thumbnail}" title="{name}"></div>',
+                '<tpl else>',
+                    '<div class="thumb"><img src="{url}" title="{name}"></div>',
+                '</tpl>',
                 '<span>{shortName}</span></div>',
                 '</tpl>',
                 '<div class="x-clear"></div>'
@@ -100,11 +104,12 @@ Chooser = function(config)
     Ext.define('chooser.Image', {
         extend: 'Ext.data.Model',
         fields: [
-            {name: 'name', type: 'string'},
-            {name: 'size', type: 'float'},
-            {name: 'type', type: 'string'},
-            {name: 'url',  type: 'string'},
-            {name: 'id',   type: 'string'},
+            {name: 'name',         type: 'string'},
+            {name: 'size',         type: 'float'},
+            {name: 'type',         type: 'string'},
+            {name: 'url',          type: 'string'},
+            {name: 'thumbnail',    type: 'string'},
+            {name: 'id',           type: 'string'},
             {name: 'lastmodified', type: 'date', dateFormat: 'timestamp'}
         ]
     });
