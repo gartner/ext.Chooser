@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>TinyMCE File-browser</title>
+
+    <link type="text/css" href="../extjs4/resources/css/ext-all.css" media="screen" rel="stylesheet" />
+    <link type="text/css" href="ext.Chooser.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="../extjs4/ext-all.js"></script>
+    <script type="text/javascript" src="ext.Chooser.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+    Ext.onReady(function () {
+        var FileBrowserDialogue = {
+
+            init: function () {
+                var params,
+                    chooser,
+                    config,
+                    type
+                ;
+
+                params = top.tinymce.activeEditor.windowManager.getParams();
+                config = params.config;
+                type = params.meta.filetype;
+
+                // Set filebrowser-dialogs size to the same as the popup-window.
+                config.type = type;
+                if (typeof config.window !== 'object') {
+                    config.window = {};
+                }
+
+                // TODO: Read size of whatever is containing this
+                //config.window.width = 600;
+                //config.window.height = 350;
+                config.window.resizable = false;
+                config.window.draggable = false;
+                config.window.closable = false;
+                config.window.frame = false;
+                config.window.title = false;
+
+                // Make sure the tinyMCE windows is closed when the chooser closes.
+                if (config.window.listeners == undefined) {
+                    config.window.listeners = {};
+                }
+
+                /*
+                 * Perform this when window is closed
+                 */
+                config.window.listeners.close = {
+                    fn: function () {
+                        top.tinymce.activeEditor.windowManager.close();
+                    }
+                };
+
+
+                config.okFunction = function (nodes) {
+                    var url,
+                        meta = {}
+                    ;
+
+                    // Put the value returned from the chooser, into the field in the tinyMCEpopup
+                    url = nodes[0].data.url;
+
+                    // If an imagebrowser, also set the alt-value and the title
+                    if ('image' === type) {
+                        meta = {
+                            alt: nodes[0].data.name
+                        };
+                    }
+
+                    if ('file' === type) {
+                        meta = {
+                            text: nodes[0].data.name,
+                            title: nodes[0].data.name
+                        };
+                    }
+
+                    params.onInsert(url, meta, type);
+
+                };
+
+                chooser = Chooser(config);
+
+                // Resize the extjs-image-chooser when the windows its in is resized.
+                /*tinyMCE.dom.Event.add(window, 'resize', function (e) {
+                    var vp = tinyMCEPopup.dom.getViewPort(window);
+                    chooser.window.setSize(vp.w, vp.h);
+                });
+                */
+                // Display the chooser
+                chooser.show();
+
+            }
+
+        };
+
+        FileBrowserDialogue.init();
+    });
+</script>
+</body>
+</html>
