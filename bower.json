@@ -1,0 +1,9 @@
+{
+  "name": "gartneri-ext.chooser",
+  "version": "0.5.0",
+  "main": "",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ]
+}
