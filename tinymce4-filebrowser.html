@@ -5,54 +5,103 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>TinyMCE File-browser</title>
 
-    <link type="text/css" href="../extjs4/resources/css/ext-all.css" media="screen" rel="stylesheet" />
     <link type="text/css" href="ext.Chooser.css" rel="stylesheet" />
 
-    <script type="text/javascript" src="../extjs4/ext-all.js"></script>
     <script type="text/javascript" src="ext.Chooser.js"></script>
 
 </head>
 <body>
 
 <script type="text/javascript">
-    Ext.onReady(function () {
-        var FileBrowserDialogue = {
+    var params = top.tinymce.activeEditor.windowManager.getParams()
+            ;
 
-            init: function () {
-                var params,
-                    chooser,
-                    config,
-                    type
+    if (undefined == params.extjsJsPath) {
+        params.extjsJsPath = '../extjs4/ext-all.js';
+    }
+    if (!loadFile(params.extjsJsPath, 'js', run)) {
+        console.log("Could not load Extjs");
+    }
+
+    if (undefined == params.extjsCssPath) {
+        params.extjsCssPath = '../extjs4/resources/css/ext-all.css';
+    }
+    if (!loadFile(params.extjsCssPath, 'css')) {
+        console.log("Could not load Extjs css-file");
+    }
+
+
+    function loadFile(filename, filetype, onload)
+    {
+        var fileref = undefined
                 ;
 
-                params = top.tinymce.activeEditor.windowManager.getParams();
-                config = params.config;
-                type = params.meta.filetype;
+        if (filetype == "js"){ //if filename is a external JavaScript file
+            fileref = document.createElement('script');
+            fileref.setAttribute("type", "text/javascript");
+            fileref.setAttribute("src", filename);
+        }
+        else if (filetype == "css") { //if filename is an external CSS file
+            fileref = document.createElement("link");
+            fileref.setAttribute("rel", "stylesheet");
+            fileref.setAttribute("type", "text/css");
+            fileref.setAttribute("href", filename);
+        }
 
-                // Set filebrowser-dialogs size to the same as the popup-window.
-                config.type = type;
-                if (typeof config.window !== 'object') {
-                    config.window = {};
-                }
+        if (typeof fileref != "undefined") {
 
-                // TODO: Read size of whatever is containing this
-                //config.window.width = 600;
-                //config.window.height = 350;
-                config.window.resizable = false;
-                config.window.draggable = false;
-                config.window.closable = false;
-                config.window.frame = false;
-                config.window.title = false;
+            if (undefined != onload) {
+                // Attacht this to the onload-handler
+                console.log("Attaching onload-handler");
+                fileref.onload = onload;
+            }
 
-                // Make sure the tinyMCE windows is closed when the chooser closes.
-                if (config.window.listeners == undefined) {
-                    config.window.listeners = {};
-                }
+            document.getElementsByTagName("head")[0].appendChild(fileref);
+            return true;
+        }
 
-                /*
+        return false;
+    }
+
+
+    function run() {
+        Ext.onReady(function () {
+            var FileBrowserDialogue = {
+
+                init: function () {
+                    var params,
+                            chooser,
+                            config,
+                            type
+                            ;
+
+                    params = top.tinymce.activeEditor.windowManager.getParams();
+                    config = params.config;
+                    type = params.meta.filetype;
+
+                    // Set filebrowser-dialogs size to the same as the popup-window.
+                    config.type = type;
+                    if (typeof config.window !== 'object') {
+                        config.window = {};
+                    }
+
+                    // TODO: Read size of whatever is containing this
+                    //config.window.width = 600;
+                    //config.window.height = 350;
+                    config.window.resizable = false;
+                    config.window.draggable = false;
+                    config.window.closable = false;
+                    config.window.frame = false;
+                    config.window.title = false;
+
+                    // Make sure the tinyMCE windows is closed when the chooser closes.
+                    if (config.window.listeners == undefined) {
+                        config.window.listeners = {};
+                    }
+                    /*
                  * Perform this when window is closed
                  */
-                config.window.listeners.close = {
+                    config.window.listeners.close = {
                     fn: function () {
                         top.tinymce.activeEditor.windowManager.close();
                     }
@@ -88,7 +137,7 @@
                 chooser = Chooser(config);
 
                 // Resize the extjs-image-chooser when the windows its in is resized.
-                /*tinyMCE.dom.Event.add(window, 'resize', function (e) {
+                    /*tinyMCE.dom.Event.add(window, 'resize', function (e) {
                     var vp = tinyMCEPopup.dom.getViewPort(window);
                     chooser.window.setSize(vp.w, vp.h);
                 });
@@ -102,6 +151,7 @@
 
         FileBrowserDialogue.init();
     });
+    }
 </script>
 </body>
 </html>

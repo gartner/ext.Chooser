@@ -84,9 +84,11 @@ function FileBrowserHook(callback, value, meta)
         width: config.window.width + 3,
         height: config.window.height + 3,
         url: cmsURL
-    }, {
+}, {
         config: config,
         meta: meta,
+        extjsJsPath: '/cms.application/extjs4/ext-all.js',
+        extjsCssPath: '/cms.application/extjs4/resources/css/ext-all.css',
         onInsert: function (url, objVals, type) {
             if ("image" == type) {
                 getImageSize(url, callback, objVals);
